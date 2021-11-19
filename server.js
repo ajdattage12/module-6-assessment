@@ -16,6 +16,21 @@ var rollbar = new Rollbar({
 // record a generic message and send it to Rollbar
 rollbar.log('Hello world!')
 
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, "/public/index.html"))
+    rollbar.info("HTML file served successfully");
+});
+
+// app.get("/styles", function (req, res) {
+//     res.sendFile(path.join(__dirname, "/public/index.css"))
+// });
+app.use("/styles", express.static(path.join(__dirname, "/public/index.css")));
+
+// app.get("/js", function (req, res) {
+//     res.sendFile(path.join(__dirname, "/public/index.js"))
+// });
+app.use("/js", express.static(path.join(__dirname, "/public/index.js")));
+
 app.get('/api/robots', (req, res) => {
     try {
         rollbar.info("Bots loaded successfully")
@@ -26,15 +41,6 @@ app.get('/api/robots', (req, res) => {
         res.sendStatus(400)
     }
 })
-
-app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname, "/public/index.html"))
-    rollbar.info("HTML file served successfully");
-});
-
-app.use("/js", express.static(path.join(__dirname, "/public/index.js")));
-
-app.use("/styles", express.static(path.join(__dirname, "/public/index.css")));
 
 app.get('/api/robots/five', (req, res) => {
     try {
@@ -54,7 +60,7 @@ app.post('/api/duel', (req, res) => {
     try {
         // getting the duos from the front end
         let {compDuo, playerDuo} = req.body
-
+        
         // adding up the computer player's total health and attack damage
         let compHealth = compDuo[0].health + compDuo[1].health
         let compAttack = compDuo[0].attacks[0].damage + compDuo[0].attacks[1].damage + compDuo[1].attacks[0].damage + compDuo[1].attacks[1].damage
@@ -66,7 +72,7 @@ app.post('/api/duel', (req, res) => {
         // calculating how much health is left after the attacks on each other
         let compHealthAfterAttack = compHealth - playerAttack
         let playerHealthAfterAttack = playerHealth - compAttack
-
+        
         // comparing the total health to determine a winner
         if (compHealthAfterAttack > playerHealthAfterAttack) {
             playerRecord.losses++
