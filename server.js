@@ -27,6 +27,7 @@ app.get('/api/robots', (req, res) => {
 
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, "/public/index.html"))
+    rollbar.info("HTML file served successfully");
 });
 
 app.use("/js", express.static(path.join(__dirname, "/public/index.js")));
@@ -38,8 +39,10 @@ app.get('/api/robots/five', (req, res) => {
         let shuffled = shuffleArray(bots)
         let choices = shuffled.slice(0, 5)
         let compDuo = shuffled.slice(6, 8)
+        rollbar.info("Robots shuffled successfully")
         res.status(200).send({choices, compDuo})
     } catch (error) {
+        rollbar.error("Error getting five bots");
         console.log('ERROR GETTING FIVE BOTS', error)
         res.sendStatus(400)
     }
@@ -72,6 +75,7 @@ app.post('/api/duel', (req, res) => {
         }
     } catch (error) {
         console.log('ERROR DUELING', error)
+        rollbar.error("Error dueling")
         res.sendStatus(400)
     }
 })
@@ -80,6 +84,7 @@ app.get('/api/player', (req, res) => {
     try {
         res.status(200).send(playerRecord)
     } catch (error) {
+        rollbar.error('Error getting player stats')
         console.log('ERROR GETTING PLAYER STATS', error)
         res.sendStatus(400)
     }
