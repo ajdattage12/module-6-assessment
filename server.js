@@ -18,8 +18,10 @@ rollbar.log('Hello world!')
 
 app.get('/api/robots', (req, res) => {
     try {
+        rollbar.info("Bots loaded successfully")
         res.status(200).send(botsArr)
     } catch (error) {
+        rollbar.error("Error getting bots on page")
         console.log('ERROR GETTING BOTS', error)
         res.sendStatus(400)
     }
@@ -68,9 +70,11 @@ app.post('/api/duel', (req, res) => {
         // comparing the total health to determine a winner
         if (compHealthAfterAttack > playerHealthAfterAttack) {
             playerRecord.losses++
+            rollbar.info("Player lost game")
             res.status(200).send('You lost!')
         } else {
             playerRecord.losses++
+            rollbar.info("Player won game")
             res.status(200).send('You won!')
         }
     } catch (error) {
